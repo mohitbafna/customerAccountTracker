@@ -1,0 +1,187 @@
+package com.bank.controller;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.NonTransientDataAccessException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.bank.exception.EmptyListException;
+import com.bank.exception.ResourceNotFoundException;
+import com.bank.model.Customer;
+import com.bank.service.CustomerServiceImp;
+
+@RestController
+@RequestMapping("/bank")
+public class CustomerController {
+
+	@Autowired
+	CustomerServiceImp customerService;
+
+	@GetMapping("/customers")
+	public ResponseEntity<List<Customer>> getAllCustomer() {
+		try {
+		List<Customer> customerList = customerService.getAllCustomers();
+		if (customerList.isEmpty()) {
+			throw new EmptyListException("Customer list is empty");
+		}
+		return new ResponseEntity<List<Customer>>(customerList, new HttpHeaders(), HttpStatus.OK);
+		}
+		catch(EmptyListException e) {
+			throw new EmptyListException("Customer list is empty");
+		}
+		catch (Exception e) {
+			return new ResponseEntity("Internal Server Error", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+        //for check purpose throwing exception when list present , there EmptyListException Should be thrown but giving inappropriate result
+		//should be checked what is problem with that   
+	}
+
+//	@GetMapping("/customers/{id}")
+//	public ResponseEntity<Optional<Customer>> getCustomer(@PathVariable long id) {
+//		Optional<Customer> customer = customerService.getCustomer(id);
+//		if (customer.isPresent())
+//			return new ResponseEntity<Optional<Customer>>(customer, new HttpHeaders(), HttpStatus.OK);
+//		else
+//			return new ResponseEntity<Optional<Customer>>(customer, new HttpHeaders(), HttpStatus.NOT_FOUND);
+//	}
+	@GetMapping("/customers/{id}")
+	public ResponseEntity<Optional<Customer>> getCustomer(@PathVariable long id) {
+		try {
+			Optional<Customer> customer = customerService.getCustomer(id);
+			if (customer.isPresent()) {
+				return new ResponseEntity<Optional<Customer>>(customer, new HttpHeaders(), HttpStatus.OK);
+			} else {
+				throw new ResourceNotFoundException("Customer not found with id " + id);
+			}
+		} catch (ResourceNotFoundException e) {
+			throw new ResourceNotFoundException("Customer not found with id " + id);
+		} catch (Exception e) {
+			return new ResponseEntity("Internal Server Error", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/*
+	 * java.sql.SQLIntegrityConstraintViolationException: Duplicate entry '4931' for
+	 * key 'customer.UK_8uytjy9xead3i1kxgbev4eqln
+	 */
+
+//	@PostMapping("/customers")
+//	public ResponseEntity<String> addCuntomer(@RequestBody Customer cus) {
+//		customerService.addcustomer(cus);
+//		return new ResponseEntity<String>("Added new customer", new HttpHeaders(), HttpStatus.CREATED);
+//    
+//	/* =================INPUT BODY========================
+//		 * JSON Format
+//		   {
+//		    "firstName": "Mohit",
+//	        "lastName": "Bafna",
+//	        "aadharNumber": 493198807053
+//		   }
+//		 * 
+//		 * */
+//	}
+
+	@PostMapping("/customers")
+	public ResponseEntity<String> addCustomer(@RequestBody Customer cus) {
+		try {
+			customerService.addcustomer(cus);
+			return new ResponseEntity<String>("Added new customer", new HttpHeaders(), HttpStatus.CREATED);
+		}
+		// Duplicate aadhar entered which is "unique field"
+		catch (NonTransientDataAccessException ex) {
+			return new ResponseEntity<String>("Failed to add customer. Duplicate Aadhar entry.", new HttpHeaders(),
+					HttpStatus.BAD_REQUEST);
+		}
+		// other Exception
+		catch (Exception e) {
+			//e.printStackTrace() ;
+			return new ResponseEntity<String>("Internal Server Error", new HttpHeaders(),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+//	customerService.updateCustomer(id, cus);
+//	return new ResponseEntity<String>("Data updated Successfully", new HttpHeaders(), HttpStatus.OK);
+	
+	@PutMapping("/customers/{id}")
+	public ResponseEntity<String> updateDetails(@PathVariable long id, @RequestBody Customer cus) {
+		try {
+			Optional<Customer> customer = customerService.getCustomer(id);
+			if (customer.isPresent()) {
+				customerService.updateCustomer(id, cus);
+				return new ResponseEntity<String>("Data updated Successfully", new HttpHeaders(), HttpStatus.OK);
+			} else {
+				throw new ResourceNotFoundException("Customer not found with id " + id+", So can not Update data.");
+			}
+		} catch (ResourceNotFoundException e) {
+			throw new ResourceNotFoundException("Customer not found with id " +id+", So can not Update data.");
+		} catch (Exception e) {
+			return new ResponseEntity("Internal Server Error", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@DeleteMapping("/customers/{id}")
+	public ResponseEntity<String> removeCustomer(@PathVariable long id) {
+		try {
+			Optional<Customer> customer = customerService.getCustomer(id);
+			if (customer.isPresent()) {
+				customerService.removeCustomer(id);
+				return new ResponseEntity<String>("SuccessFully Deleted selected customer and there associated accounts",
+						new HttpHeaders(), HttpStatus.OK);
+			} else {
+				throw new ResourceNotFoundException("Customer not found with id " + id);
+			}
+		} catch (ResourceNotFoundException e) {
+			throw new ResourceNotFoundException("Customer not found with id " +id);
+		} catch (Exception e) {
+			return new ResponseEntity("Internal Server Error", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+			}
+     // search a customer by firstname ::: http://localhost:8080/bank/customers/firstname?firstname=mohit
+	//or search --> http://localhost:8080/bank/customers/firstname  pass parameters key :firstname value :mohit
+	@GetMapping("/customers/firstname")
+	public ResponseEntity<List<Customer>> findByFirstName(@RequestParam String firstname) {
+		try {
+		List<Customer> found = customerService.searchByFirstName(firstname);
+		if (found.isEmpty()) {
+			throw new ResourceNotFoundException("Customer not found with first name " +firstname);
+		} else
+			return new ResponseEntity<List<Customer>>(found, new HttpHeaders(), HttpStatus.FOUND); //sc : 302
+		}
+		catch (ResourceNotFoundException e) {
+			throw new ResourceNotFoundException("Customer not found with first name " +firstname);
+		} catch (Exception e) {
+			return new ResponseEntity("Internal Server Error", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR); // sc : 500
+		}
+		}
+
+	@GetMapping("/customers/lastname")
+	public ResponseEntity<List<Customer>> findByLastName(@RequestParam String lastname) {
+		try {
+		List<Customer> found = customerService.searchByLastName(lastname);
+		if (found.isEmpty()) {
+			throw new ResourceNotFoundException("Customer not found with last name "+lastname);
+		} else
+			return new ResponseEntity<List<Customer>>(found, new HttpHeaders(), HttpStatus.FOUND);//sc : 302
+		}
+		catch (ResourceNotFoundException e) {
+			throw new ResourceNotFoundException("Customer not found with last name "+lastname);
+		} catch (Exception e) {
+			return new ResponseEntity("Internal Server Error", new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR); // sc : 500
+		}
+	}
+
+}
