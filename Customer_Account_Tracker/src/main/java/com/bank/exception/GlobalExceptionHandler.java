@@ -38,5 +38,31 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<ErrorDetails>(errorDetails, HttpStatus.NOT_FOUND);
 
 	}
+	@ExceptionHandler(InSufficientFundException.class)
+	public final ResponseEntity<ErrorDetails> handleInSufficientFundException(InSufficientFundException ex, WebRequest request)
+	        throws Exception {
+		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
+				request.getDescription(false));
 
+		return new ResponseEntity<ErrorDetails>(errorDetails, HttpStatus.PAYMENT_REQUIRED);
+
+	}
+	@ExceptionHandler(InvalidFromAccountException.class)
+	public final ResponseEntity<ErrorDetails> handleInvalidFromAccountException(InvalidFromAccountException ex, WebRequest request)
+	        throws Exception {
+		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
+				request.getDescription(false));
+
+		return new ResponseEntity<ErrorDetails>(errorDetails, HttpStatus.UNAUTHORIZED);
+
+	}
+	@ExceptionHandler(InvalidToAccountException.class)
+	public final ResponseEntity<ErrorDetails> handleInvalidToAccountException(InvalidToAccountException ex, WebRequest request)
+	        throws Exception {
+		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
+				request.getDescription(false));
+
+		return new ResponseEntity<ErrorDetails>(errorDetails, HttpStatus.UNAUTHORIZED);
+
+	}
 }

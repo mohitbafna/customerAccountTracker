@@ -41,14 +41,14 @@ public class Customer {
 //		this.lastName = lastName;
 //		this.aadharNumber = aadharNumber;
 //	}
-//	public Customer(long cId, String firstName, String lastName, long aadharNumber) {
-//		super();
-//		this.cId = cId;
-//		this.firstName = firstName;
-//		this.lastName = lastName;
-//		this.aadharNumber = aadharNumber;
-//		
-//	}
+	public Customer(long cId, String firstName, String lastName, long aadharNumber) {
+		super();
+		this.cId = cId;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.aadharNumber = aadharNumber;
+		
+	}
 	public Customer(long cId, String firstName, String lastName, long aadharNumber, List<Account> accounts) {
 		super();
 		this.cId = cId;

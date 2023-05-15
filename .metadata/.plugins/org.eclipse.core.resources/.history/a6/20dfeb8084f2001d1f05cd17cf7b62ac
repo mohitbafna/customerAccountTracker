@@ -1,0 +1,47 @@
+package com.bank.CustomerService;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+
+import java.util.*;
+
+import org.junit.jupiter.api.*;
+
+import com.bank.model.*;
+import com.bank.repository.*;
+import com.bank.service.AccountServiceImp;
+
+public class TestAccountServiceMock01 {
+	private AccountServiceImp accountServiceMock ;
+	private CustomerRepository c_repoMock ;
+	private AccountRepository a_repoMock ;
+	
+	Customer cus ;
+	Account account1=new Account(1001,2000.0,"CURRENT",cus.getcId());
+	Account account1=new Account(1002,3000.0,"CURRENT",cus.getcId());
+	Account account1=new Account(1003,4000.0,"SAVING",cus.getcId());
+	Account account1=new Account(1004,50000.0,"FD",cus.getcId());
+	
+	@BeforeEach
+	void setup() {
+		this.c_repoMock=mock(CustomerRepository.class) ;
+		this.a_repoMock=mock(AccountRepository.class) ;
+		this.accountServiceMock=new AccountServiceImp(a_repoMock, c_repoMock);
+	}
+	
+	@Test
+	void testRetrieveCustomerCount() {
+		//given
+		List<Customer> list=new ArrayList<>() ;
+		list.add(customer1);
+		list.add(customer2);
+		list.add(customer3);
+		list.add(customer4);
+		when(c_repoMock.findAll()).thenReturn(list) ;
+		int expected= 4 ;
+		//when
+		int actual=customerServiceMock.getAllCustomers().size() ;
+		//then
+		assertEquals(expected, actual);
+	}
+}

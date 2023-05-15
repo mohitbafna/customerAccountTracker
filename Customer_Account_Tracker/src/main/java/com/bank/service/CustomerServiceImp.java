@@ -12,8 +12,11 @@ import com.bank.repository.CustomerRepository;
 
 @Service
 public class CustomerServiceImp implements CustomerService {
-	@Autowired
+	
 	public CustomerRepository customerRepository;
+	public CustomerServiceImp(CustomerRepository customerRepository) {
+		this.customerRepository=customerRepository ;
+	}
 
 	public List<Customer> getAllCustomers() {
 		List<Customer> customerList = customerRepository.findAll();

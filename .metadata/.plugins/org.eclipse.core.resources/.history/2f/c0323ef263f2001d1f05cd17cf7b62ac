@@ -1,0 +1,12 @@
+package com.bank.AccountService;
+
+import com.bank.model.Customer;
+import com.bank.repository.CustomerRepository;
+import com.bank.service.CustomerServiceImp;
+
+public class TestCustomerServiceMock01 {
+	private CustomerServiceImp customerServiceMock ;
+	private CustomerRepository c_repoMock ;
+	
+	Customer customer1=new Customer(1,"Mohit","Bafna",1234);
+}

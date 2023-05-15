@@ -16,10 +16,13 @@ import com.bank.repository.CustomerRepository;
 @Service
 public class AccountServiceImp implements AccountService {
 
-	@Autowired
 	private AccountRepository accountRepository;
-	@Autowired
 	private CustomerRepository customerRepository;
+
+	public AccountServiceImp(AccountRepository accountRepository, CustomerRepository customerRepository) {
+		this.accountRepository = accountRepository;
+		this.customerRepository = customerRepository;
+	}
 
 	public List<Account> getAllAccounts() {
 		List<Account> accountList = accountRepository.findAll();
@@ -36,8 +39,8 @@ public class AccountServiceImp implements AccountService {
 			accountRepository.save(acc);
 		} else
 			accountRepository.save(acc);
-		
-		return acc ;
+
+		return acc;
 	}
 
 	public void removeAccount(long id) {
@@ -48,12 +51,12 @@ public class AccountServiceImp implements AccountService {
 		return accountRepository.findById(id);
 	}
 
-	public Optional<Double> getBalanceOf(long id) throws Exception{
-		if(accountRepository.findById(id).isPresent())
-		    return accountRepository.findById(id).map(Account::getBalance) ;
+	public Optional<Double> getBalanceOf(long id) throws Exception {
+		if (accountRepository.findById(id).isPresent())
+			return accountRepository.findById(id).map(Account::getBalance);
 		else
-			throw new Exception("Account with "+id +" account number not present");
-			
+			throw new Exception("Account with " + id + " account number not present");
+
 	}
 
 	public List<Account> findByType(Type type) {

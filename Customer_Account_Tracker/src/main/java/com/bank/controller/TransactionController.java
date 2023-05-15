@@ -1,23 +1,48 @@
 package com.bank.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.Optional;
 
-import com.bank.service.TransactionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+
+import com.bank.exception.*;
+import com.bank.model.Account;
+import com.bank.service.*;
 
 @RestController
 public class TransactionController {
 	@Autowired
-	private TransactionService transactionService ;
-	
+	private TransactionService transactionService;
+	@Autowired
+	private AccountService accountService;
+
 	@PutMapping("/customers/accounts/transaction")
-	public ResponseEntity<String> transferFunds(@RequestParam long fromAccount, @RequestParam long toAccount, @RequestParam double amount){
-		String fund= transactionService.tranferFunds(fromAccount, toAccount, amount) ;
-		return new ResponseEntity<String>(fund,new HttpHeaders(), HttpStatus.OK) ;
+	public ResponseEntity<String> transferFunds(@RequestParam long fromAccount, @RequestParam long toAccount,
+			@RequestParam double amount) {
+		try {
+			Optional<Account> checkFromAccount = accountService.getAccountDetailsById(fromAccount);
+			Optional<Account> checkToAccount = accountService.getAccountDetailsById(toAccount);
+			if (checkFromAccount.isPresent()) {
+				if (checkToAccount.isPresent() && checkFromAccount.get().getAccount_number()!=checkToAccount.get().getAccount_number()) {
+					if (checkFromAccount.get().getBalance() >= amount) {
+						String fund = transactionService.tranferFunds(fromAccount, toAccount, amount);
+						return new ResponseEntity<String>(fund, new HttpHeaders(), HttpStatus.OK);
+					}
+					throw new InSufficientFundException("Transaction failed : balance is not sufficient in account");
+				}
+				throw new InvalidToAccountException("Beneficiary Account number is invalid");
+			}
+			throw new InvalidFromAccountException("Sender Account number is invalid");
+		} 
+		catch (InvalidFromAccountException e) {
+			throw new InvalidFromAccountException("Sender Account number is invalid");
+		} 
+		catch (InSufficientFundException e) {
+			throw new InSufficientFundException("Transaction failed : balance is not sufficient in account");
+		} 
+		catch (InvalidToAccountException e) {
+			throw new InvalidToAccountException("Beneficiary Account number is invalid");
+		}
 	}
 }

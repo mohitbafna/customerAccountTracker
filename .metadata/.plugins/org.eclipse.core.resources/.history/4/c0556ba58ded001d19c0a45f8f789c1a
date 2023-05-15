@@ -1,0 +1,11 @@
+package com.bank.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(code = HttpStatus.NO_CONTENT)  // changes in output even if we change the status to notfound
+public class EmptyListException extends RuntimeException {
+	public EmptyListException(String message) {
+		super(message);
+	}
+}

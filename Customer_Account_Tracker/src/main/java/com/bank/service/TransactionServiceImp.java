@@ -1,7 +1,5 @@
 package com.bank.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,29 +13,17 @@ public class TransactionServiceImp implements TransactionService {
 
 	public String tranferFunds(long fromAccountId, long toAccountId, double Amount) {
 
-		Optional<Account> fromAccount = accountRepository.findById(fromAccountId);
-		Optional<Account> toAccount = accountRepository.findById(toAccountId);
+		Account fromAccount = accountRepository.findById(fromAccountId).get();
+		Account toAccount = accountRepository.findById(toAccountId).get();
 		double amount = Amount;
 
-		if (fromAccount.isPresent()) {
-			if (toAccount.isPresent()) {
-				if (fromAccount.get().getBalance() > amount) {
+		fromAccount.setBalance(fromAccount.getBalance() - amount);
+		toAccount.setBalance(toAccount.getBalance() + amount);
 
-					Account FromAccount = fromAccount.get();
-					Account ToAccount = toAccount.get();
+		accountRepository.save(fromAccount);
+		accountRepository.save(toAccount);
 
-					FromAccount.setBalance(FromAccount.getBalance() - amount);
-					ToAccount.setBalance(ToAccount.getBalance() + amount);
-
-					accountRepository.save(FromAccount);
-					accountRepository.save(ToAccount);
-
-					return "Transaction Successfull";
-				} else
-					return "Insufficient balance";
-			} else
-				return "Wrong Recipient Account Number";
-		} else
-			return "Invalid Account Id";
+		return "Transaction Success : Amount "+amount+" is debited. \nUpdated Balance : "+fromAccount.getBalance();
+		
 	}
 }

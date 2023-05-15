@@ -40,7 +40,7 @@ public class Account {
     @JoinColumn(name="customer_id")
     private Customer customer_detail ;
 
-	public Account() {
+	public Account(int i, double d, String string, long l) {
 		super();
 	}
 	

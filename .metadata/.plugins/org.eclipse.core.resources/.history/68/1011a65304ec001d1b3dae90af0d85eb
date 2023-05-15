@@ -1,0 +1,5 @@
+package com.bank.exception;
+
+public class EmptyListException extends RuntimeException {
+
+}
