@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="TestCustomerServiceMock01" project="Customer_Account_Tracker" tests="1" started="1" failures="0" errors="0" ignored="0">
+  <testsuite name="com.bank.AccountService.TestCustomerServiceMock01" time="2.468" displayname="TestCustomerServiceMock01" uniqueid="[engine:junit-jupiter]/[class:com.bank.AccountService.TestCustomerServiceMock01]">
+    <testcase name="testRetrieveCustomerCount" classname="com.bank.AccountService.TestCustomerServiceMock01" time="2.468" displayname="testRetrieveCustomerCount()" uniqueid="[engine:junit-jupiter]/[class:com.bank.AccountService.TestCustomerServiceMock01]/[method:testRetrieveCustomerCount()]"/>
+  </testsuite>
+</testrun>

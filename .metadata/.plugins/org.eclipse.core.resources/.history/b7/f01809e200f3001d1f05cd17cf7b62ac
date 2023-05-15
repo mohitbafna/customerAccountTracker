@@ -1,0 +1,115 @@
+package com.bank.model;
+
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+
+@Entity
+public class Customer {
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private long cId;
+	
+	@Column(name="first_name", nullable=true)
+	private String firstName ;
+	
+	@Column(name="last_name", nullable=true)
+	private String lastName ;
+	
+	@Column(name="aadhar", unique=true, nullable=true)
+	private long aadharNumber ;
+	
+	//@JsonIgnore
+	//@JsonIgnoreProperties({"customer_details"})
+	@OneToMany(mappedBy="customer_detail", cascade= CascadeType.ALL, fetch=FetchType.LAZY)
+	private List<Account> accounts ;
+
+	public Customer() {
+		super();
+	}
+
+//	public Customer(String firstName, String lastName, long aadharNumber) {
+//		super();
+//		this.firstName = firstName;
+//		this.lastName = lastName;
+//		this.aadharNumber = aadharNumber;
+//	}
+	public Customer(long cId, String firstName, String lastName, long aadharNumber) {
+		super();
+		this.cId = cId;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.aadharNumber = aadharNumber;
+		
+	}
+	public Customer(long cId, String firstName, String lastName, long aadharNumber, List<Account> accounts) {
+		super();
+		this.cId = cId;
+		this.firstName = firstName.toLowerCase();
+		this.lastName = lastName.toLowerCase();
+		this.aadharNumber = aadharNumber;
+		this.accounts = accounts;
+	}
+
+	public long getcId() {
+		return cId;
+	}
+
+	public void setcId(long cId) {
+		this.cId = cId;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName.toLowerCase();
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName.toLowerCase();
+	}
+
+	public long getAadharNumber() {
+		return aadharNumber;
+	}
+
+	public void setAadharNumber(long aadharNumber) {
+		this.aadharNumber = aadharNumber;
+	}
+
+	public List<Account> getAccounts() {
+		return accounts;
+	}
+
+	public void setAccounts(List<Account> accounts) {
+		this.accounts = accounts;
+	}
+
+	@Override
+	public String toString() {
+		return "Customer [cId=" + cId + ", firstName=" + firstName + ", lastName=" + lastName + ", aadharNumber="
+				+ aadharNumber + ", accounts=" + accounts + "]";
+	}
+
+//	@Override
+//	public String toString() {
+//		return "Customer [firstName=" + firstName + ", lastName=" + lastName + ", aadharNumber="
+//				+ aadharNumber+ "]";
+//	}
+	
+	
+	
+}

@@ -31,10 +31,14 @@ public class Customer {
 	@OneToMany(mappedBy="customer_detail", cascade= CascadeType.ALL, fetch=FetchType.LAZY)
 	private List<Account> accounts ;
 
-	public Customer() {
+	public Customer() { 
 		super();
 	}
-
+	public Customer(long cId) {  //require in Testcase of getAllAccounts
+		super();
+		this.cId = cId;
+	}
+	
 //	public Customer(String firstName, String lastName, long aadharNumber) {
 //		super();
 //		this.firstName = firstName;

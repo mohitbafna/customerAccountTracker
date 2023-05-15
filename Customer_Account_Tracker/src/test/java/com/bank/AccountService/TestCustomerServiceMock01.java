@@ -27,7 +27,7 @@ public class TestCustomerServiceMock01 {
 	}
 	
 	@Test
-	void testRetrieveCustomerCount() {
+	void testRetrieveAllCustomers() {
 		//given
 		List<Customer> list=new ArrayList<>() ;
 		list.add(customer1);
@@ -35,10 +35,12 @@ public class TestCustomerServiceMock01 {
 		list.add(customer3);
 		list.add(customer4);
 		when(c_repoMock.findAll()).thenReturn(list) ;
-		int expected= 4 ;
 		//when
-		int actual=customerServiceMock.getAllCustomers().size() ;
+		List<Customer> actual=customerServiceMock.getAllCustomers() ;
 		//then
-		assertEquals(expected, actual);
+		assertEquals(list.size(), actual.size());
+		assertEquals(list.get(0), actual.get(0));
+		assertEquals(list.get(3), actual.get(3));
+		verify(c_repoMock, times(1)).findAll();
 	}
 }

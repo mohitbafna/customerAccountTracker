@@ -1,0 +1,37 @@
+package com.bank.AccountService;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.*;
+
+import com.bank.model.Customer;
+import com.bank.repository.CustomerRepository;
+import com.bank.service.CustomerServiceImp;
+
+public class TestCustomerServiceMock02 {
+	private CustomerServiceImp customerServiceMock ;
+	private CustomerRepository c_repoMock ;
+	
+	@BeforeEach
+	void setup() {
+		this.c_repoMock=mock(CustomerRepository.class) ;	
+		this.customerServiceMock=new CustomerServiceImp(c_repoMock);
+	}
+	
+	@Test
+	void testRetrieveCustomerById() {
+		//given
+		Customer customer1=new Customer(1L,"Mohit","Bafna",1234);
+		when(c_repoMock.findById(1L)).thenReturn(Optional.of(customer1)) ;
+		
+		//when
+	     Optional<Customer> actual=customerServiceMock.getCustomer(1L) ;
+	     
+		//then
+		assertEquals(true, actual.isPresent());
+		verify(c_repoMock).findAll();
+	}
+}

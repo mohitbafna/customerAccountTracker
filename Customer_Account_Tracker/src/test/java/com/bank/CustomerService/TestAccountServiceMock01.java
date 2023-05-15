@@ -16,11 +16,10 @@ public class TestAccountServiceMock01 {   //not working 14/5/2023
 	private CustomerRepository c_repoMock ;
 	private AccountRepository a_repoMock ;
 	
-	Customer cus ;
-	Account account1=new Account(1001,2000.0,"CURRENT",1);
-	Account account2=new Account(1002,3000.0,"CURRENT",2);
-	Account account3=new Account(1003,4000.0,"SAVING",3);
-	Account account4=new Account(1004,50000.0,"FD",1);
+	Account account1=new Account(1001,2000.0,Account.Type.SAVING,new Customer(1));
+	Account account2=new Account(1002,3000.0,Account.Type.CURRENT,new Customer(2));
+	Account account3=new Account(1003,4000.0,Account.Type.FD,new Customer(3));
+	Account account4=new Account(1004,50000.0,Account.Type.CURRENT,new Customer(4));
 	
 	@BeforeEach
 	void setup() {
@@ -38,10 +37,14 @@ public class TestAccountServiceMock01 {   //not working 14/5/2023
 		list.add(account3);
 		list.add(account4);
 		when(a_repoMock.findAll()).thenReturn(list) ;
-		long expected= 1002 ;
+		long expectedCustomerId=2 ;
 		//when
-		long actual=accountServiceMock.getAllAccounts().get(1).getAccount_number() ;
+		List<Account> actual=accountServiceMock.getAllAccounts() ;
 		//then
-		assertEquals(expected, actual);
+		assertEquals(list.size(), actual.size());
+		assertEquals(expectedCustomerId, actual.get(1).getCustomer_detail().getcId());
+		assertEquals(list.get(0),actual.get(0));
+		assertEquals(list.get(2),actual.get(2));
+		verify(a_repoMock, times(1)).findAll();
 	}
 }
