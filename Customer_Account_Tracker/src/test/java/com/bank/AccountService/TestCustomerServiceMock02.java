@@ -34,11 +34,11 @@ public class TestCustomerServiceMock02 {
 
 		// then
 		// Verify the result
-		assertTrue(actual.isPresent());
+		assertTrue(actual.isPresent());    //should be true -> Test Pass
 		assertEquals(customer1, actual.get());
-
+         assertInstanceOf(Optional.class, actual) ;
 		// Verify that the customerRepository.findById method was called with the
 		// correct argument
-		verify(c_repoMock).findById(1L);
+		verify(c_repoMock,times(1)).findById(1L);
 	}
 }

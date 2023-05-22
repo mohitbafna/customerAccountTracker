@@ -1,0 +1,47 @@
+package com.bank.AccountService;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.*;
+import org.mockito.*;
+
+import com.bank.model.Customer;
+import com.bank.repository.CustomerRepository;
+import com.bank.service.*;
+
+public class TestCustomerServiceMock04 {
+	private CustomerServiceImp customerServiceMock;
+	private CustomerRepository c_repoMock;
+	@BeforeEach
+	void setup() {
+		this.c_repoMock = mock(CustomerRepository.class);
+		this.customerServiceMock = new CustomerServiceImp(c_repoMock);
+	}
+    @Test
+    public void testUpdateCustomer() {
+        // Mock data
+        long customerId = 1L;
+        Customer existingCustomer = new Customer(customerId, "John", "Doe", 12345);
+        Customer updatedCustomer = new Customer(customerId, "John", "Smith", 0L);
+
+        // Mock the behavior of the customer repository
+        when(c_repoMock.findById(customerId)).thenReturn(Optional.of(existingCustomer));
+        when(c_repoMock.save(any(Customer.class))).thenReturn(updatedCustomer);
+
+        // Call the method to be tested
+        customerServiceMock.updateCustomer(customerId, updatedCustomer);
+
+        // Verify the repository interactions
+        verify(c_repoMock).findById(customerId);
+        verify(c_repoMock).save(any(Customer.class));
+
+        // Assert that the customer has been updated correctly
+        assertEquals("John", updatedCustomer.getFirstName());
+        assertEquals("Smith", updatedCustomer.getLastName());
+        assertEquals(12345, updatedCustomer.getAadharNumber());
+    }
+}

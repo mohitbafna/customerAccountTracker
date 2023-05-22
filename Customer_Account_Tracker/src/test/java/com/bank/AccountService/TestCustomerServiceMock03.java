@@ -1,0 +1,37 @@
+package com.bank.AccountService;
+
+import static org.mockito.Mockito.*;
+
+import org.junit.jupiter.api.*;
+
+import com.bank.model.Customer;
+import com.bank.repository.CustomerRepository;
+import com.bank.service.CustomerServiceImp;
+
+public class TestCustomerServiceMock03 {
+	private CustomerServiceImp customerServiceMock;
+	private CustomerRepository c_repoMock;
+	Customer customer = new Customer(1L, "Azim", "Premji", 78909);
+	@BeforeEach
+	void setup() {
+		this.c_repoMock = mock(CustomerRepository.class);
+		this.customerServiceMock = new CustomerServiceImp(c_repoMock);
+	}
+
+	@Test
+	void testCreateCustomer() {
+		// given
+		
+		// Mock the customerRepository behavior
+		  when(c_repoMock.save(customer)).thenReturn(customer);
+
+		// when
+		// Call the method you want to test
+		 customerServiceMock.addcustomer(customer) ;
+
+		// then
+		// Verify that the customerRepository.findById method was called with the
+		// correct argument
+		verify(c_repoMock, times(1)).save(customer) ;
+	}
+}

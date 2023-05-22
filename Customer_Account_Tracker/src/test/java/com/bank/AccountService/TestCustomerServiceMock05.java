@@ -1,0 +1,35 @@
+package com.bank.AccountService;
+
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.*;
+
+import com.bank.repository.CustomerRepository;
+import com.bank.service.CustomerServiceImp;
+
+public class TestCustomerServiceMock05 {
+	private CustomerServiceImp customerServiceMock;
+	private CustomerRepository c_repoMock;
+	@BeforeEach
+	void setup() {
+		this.c_repoMock = mock(CustomerRepository.class);
+		this.customerServiceMock = new CustomerServiceImp(c_repoMock);
+	}
+	@Test
+    public void testRemoveCustomer_CustomerNotFound() {
+        // Mock data
+        long customerId = 1L;
+
+        // Mock the behavior of the customer repository
+        when(c_repoMock.findById(customerId)).thenReturn(Optional.empty());
+
+        // Call the method to be tested
+        customerServiceMock.removeCustomer(customerId);
+
+        // Verify the repository interactions
+        verify(c_repoMock).findById(customerId);
+        verify(c_repoMock, never()).deleteById(customerId);
+    }
+}
